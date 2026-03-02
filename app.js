@@ -15,7 +15,12 @@ const passport = require("passport");
 const User = require("./models/users.js");
 const LocalStrategy = require("passport-local");
 
-
+app.use((req,res,next)=>{
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.currUser = req.user;
+    next();
+})
 
 const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
@@ -82,12 +87,7 @@ async function main() {
 //     res.send("Root is Listening");
 // })
 
-app.use((req,res,next)=>{
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
-    res.locals.currUser = req.user;
-    next();
-})
+
 
 // app.get("/demoUser" , async(req,res)=>{
 // let fakeUser = new User({
