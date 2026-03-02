@@ -1,3 +1,8 @@
+if(process.env.NODE_ENV != "production"){
+require('dotenv').config();
+}
+
+
 const express = require("express");
 const router = express.Router();
 
@@ -7,6 +12,9 @@ const { listingSchema, reviewSchema } = require("../schema.js");
 const Listing = require("../models/listing.js");
 const { isLoggedIn, isOwner } = require("../middleware.js");
 const listingController = require("../controllers/listing.js");
+const multer  = require('multer')
+const {storage} = require("../cloudConfig.js")
+const upload = multer({storage})
 
 // Validate Listing Middleware
 const validateListing = (req, res, next) => {
@@ -24,14 +32,14 @@ const validateListing = (req, res, next) => {
 // Routes
 router.route("/")
     .get(wrapAsync(listingController.index)) // Index route
-    .post(validateListing, wrapAsync(listingController.create)); // Create route
+    .post(isLoggedIn,validateListing,upload.single('listing[image]'), wrapAsync(listingController.create)); // Create route
 
 // New Route
 router.get("/new", isLoggedIn, listingController.new);
 
 router.route("/:id")
     .get(wrapAsync(listingController.show)) // Show route
-    .put(isLoggedIn, isOwner, validateListing, wrapAsync(listingController.update)) // Update route
+    .put(isLoggedIn, isOwner, validateListing,upload.single('listing[image]'), wrapAsync(listingController.update)) // Update route
     .delete(isLoggedIn, isOwner, wrapAsync(listingController.delete)); // Delete route
 
 

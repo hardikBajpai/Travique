@@ -6,9 +6,12 @@ module.exports.index = async (req,res)=>{
 }
 
 module.exports.create = async (req,res,err)=>{//Create route
-    
+let url = req.file.path;
+let filename = req.file.filename;
+
 const newListing = new Listing(req.body.listing);
 newListing.owner = req.user._id;
+newListing.image = {url , filename};
 await newListing.save();
 req.flash("success" , "New listing Created");
 res.redirect("/listings")
@@ -40,12 +43,23 @@ module.exports.edit = async(req,res)=>{
         req.flash("error" , "Listing does not exist");
         res.redirect("/listings");
     }
-    res.render("listing/edit.ejs" , {listing} );
+
+    let originalImageUrl = listing.image.url;
+    originalImageUrl = originalImageUrl.replace("/upload" , "/upload/w_250");``
+    res.render("listing/edit.ejs" , {listing , originalImageUrl} );
 };
 
 module.exports.update = async (req,res)=>{
     let {id} = req.params;
-   await Listing.findByIdAndUpdate(id ,{...req.body.listing});
+ let listing =   await Listing.findByIdAndUpdate(id ,{...req.body.listing});
+if(typeof req.file!= "undefined"){
+   let url = req.file.path;
+let filename = req.file.filename;
+
+listing.image = {url , filename};
+await listing.save();
+
+}
    req.flash("success" , "Listing Updated");
    res.redirect("/listings");
 };
