@@ -26,11 +26,14 @@ Travique is a full-stack web application inspired by Airbnb that allows users to
 - MongoDB
 
 ## 📂 Project Structure
-Travique/
 │── models/ # Database schemas
+
 │── routes/ # Express routes
+
 │── views/ # Templates (EJS or frontend)
+
 │── public/ # Static files (CSS, JS)
+
 │── app.js # Main server file
 
 🎯 Learning Outcomes
